@@ -127,3 +127,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+flask-zappa-dev-1606932385.zip
