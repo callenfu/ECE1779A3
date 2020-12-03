@@ -9,33 +9,31 @@ db = boto3.resource('dynamodb')
 class UserTable:
     usertable = db.Table('UserTable')
 
-    def add_user(self,username, password, usertype):
+    def add_user(self, username, password,admin_auth,email ):
         password_hash = generate_password_hash(password)
         user = {
             'username': username,
             'password_hash': password_hash,
-            'usertype': usertype
+            'admin_auth': admin_auth,
+            'email': email
         }
         self.usertable.put_item(
             Item=user
         )
 
-    def check_user(self,username):
+    def check_item(self,item,value):
         response = self.usertable.get_item(
             Key={
-                'username': username
+                item: value
             }
         )
-        user = None
+        result = None
         if 'Item' in response:
-            user = response['Item']
-        return user
+            result = response['Item']
+        return result
 
 
     def verify_user(self):
         pass
 
-mytable = UserTable()
-
-print(mytable.check_user("callen"))
 
