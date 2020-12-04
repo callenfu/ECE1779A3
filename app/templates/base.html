@@ -2,6 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script>
+  function filesize(elem){
+    document.cookie = `filesize=${elem.files[0].size}`
+  }
+
+    </script>
 
 </head>
 
@@ -21,7 +27,20 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-
+                <a class="navbar-brand" href="{{ url_for('home') }}">Home</a>
+                    {% if session['loggedin'] %}
+                    <a class="navbar-brand" href="{{ url_for('home') }}">Function</a>
+                    {% endif %}
+            </div>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if not session['loggedin'] %}
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    {% else %}
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    <li><a href="{{ url_for('change_my_password') }}">change password</a></li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
     </nav>
 {% endblock %}

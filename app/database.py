@@ -9,12 +9,12 @@ db = boto3.resource('dynamodb')
 class UserTable:
     usertable = db.Table('UserTable')
 
-    def add_user(self, username, password,admin_auth,email ):
+    def add_user(self, username, password, email ):
         password_hash = generate_password_hash(password)
         user = {
             'username': username,
             'password_hash': password_hash,
-            'admin_auth': admin_auth,
+            'admin_auth': False,
             'email': email
         }
         self.usertable.put_item(
@@ -33,7 +33,17 @@ class UserTable:
         return result
 
 
-    def verify_user(self):
-        pass
+    def update_password_username(self,username, password_hash):
+        response = self.usertable.update_item(
+            Key={
+                'username': username
+            },
+            UpdateExpression="set password_hash=:r",
+            ExpressionAttributeValues={
+                ':r': password_hash
+            },
+            ReturnValues="UPDATED_NEW"
+        )
+        return response
 
 
