@@ -93,7 +93,7 @@ def imageUpload():
                         upload_file(savePath, filename)
                         os.remove(savePath)
 
-                    return redirect("imageUpload")
+                    return redirect("imageUpload",getImageName(filename))
             elif request.form['url'] != "":
                 url = request.form['url']
                 if not allowedImageType(url):
@@ -121,3 +121,7 @@ def imageUpload():
                 return render_template("imageUpload.html", message='No file or url selected')
         return render_template("imageUpload.html", message="please select image")
     return redirect(url_for('login'))
+
+@app.route('/getImageName', methods=['GET', 'POST'])
+def getImageName(filename):
+    return filename
