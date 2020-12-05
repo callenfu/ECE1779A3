@@ -23,4 +23,4 @@ def clear_s3():
 
 
 def upload_file(dirname, filename):
-    s3.upload_file(dirname + '/' + filename, bucket_name, filename)
+    s3.upload_file(dirname, bucket_name, filename)

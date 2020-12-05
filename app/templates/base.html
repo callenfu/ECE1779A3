@@ -29,7 +29,7 @@
                 </button>
                 <a class="navbar-brand" href="{{ url_for('home') }}">Home</a>
                     {% if session['loggedin'] %}
-                    <a class="navbar-brand" href="{{ url_for('home') }}">Function</a>
+                    <a class="navbar-brand" href="{{ url_for('imageUpload') }}">Upload</a>
                     {% endif %}
             </div>
                 <ul class="nav navbar-nav navbar-right">
