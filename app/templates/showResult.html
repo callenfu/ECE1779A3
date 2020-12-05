@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Google API Example</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </head>
+  <body>
+    <table class="table table-bordered">
+
+    <thead>
+       <th>result</th>
+       <th> Action </th>
+    </thead>
+
+
+    {% for element in recognition_result%}
+        <tr>
+            <td>{{ element }}</td>
+            <td>
+                <form action="{{ url_for('sendRequest', aQuery=element) }}" >
+                    <input type='submit' value='select' />
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+
+  </table>
+  </body>
+</html>

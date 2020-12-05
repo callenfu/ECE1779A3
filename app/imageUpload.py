@@ -7,13 +7,14 @@ from werkzeug.utils import secure_filename
 import requests
 import random
 import string
-
-
+from app.database import UserTable
+from time import sleep
 from app.S3 import clear_s3,upload_file
 app.config["IMAGE_UPLOADS"]="./app/static/img/uploads"
 #app.config["IMAGE_PROCESSED"]="./app/static/img/processed"
 app.config["ALLOWED_IMAGE_EXETENSIONS"] = ["JPEG","JPG","PNG"]
 app.config['MAX_IMAGE_FILESIZE'] = 1024*1024
+u = UserTable()
 def generate_filename():
     '''
     method to get filename that have not been saved in the database
@@ -67,6 +68,22 @@ def deleteAllImages():
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
+@app.route('/showResult/<filename>', methods=['GET', 'POST'])
+def showResult(filename):
+    response = u.check_image("imagename", filename)
+    sleep(2)
+    textResult = response['textresult']
+    textResultList = textResult.split(";")
+    if textResultList == ['']:
+        textResultList[0] = "No text detected in image"
+    return render_template("showResult.html", recognition_result=textResultList)
+
+@app.route("/sendRequest/<string:aQuery>",methods=['GET'])
+def sendRequest(aQuery):
+
+	return redirect("https://www.google.com/maps/search/?api=1&query=" + aQuery )
+
+
 @app.route('/imageUpload', methods=['GET', 'POST'])
 def imageUpload():
     if 'loggedin' in session:
@@ -87,13 +104,13 @@ def imageUpload():
                         return render_template("imageUpload.html", message="Image is not in valid type")
                     else:
                         filename = secure_filename(image.filename)
-                        filename = processImage(filename)
-                        savePath = os.path.join(app.config["IMAGE_UPLOADS"], image.filename)
-                        image.save(savePath)
-                        upload_file(savePath, filename)
-                        os.remove(savePath)
+                        filename = getImageName(filename)
 
-                    return redirect("imageUpload",getImageName(filename))
+
+                        upload_file(image, filename)
+
+
+                    return redirect(url_for("showResult",filename=filename))
             elif request.form['url'] != "":
                 url = request.form['url']
                 if not allowedImageType(url):
@@ -112,7 +129,7 @@ def imageUpload():
                     e = sys.exc_info()
                     return render_template("imageUpload.html",
                                            message="Image could not be downloaded from url. Error: " + str(e))
-                filename = processImage(filename)
+                filename = getImageName(filename)
                 os.remove(filename)
 
                 return redirect("imageView")

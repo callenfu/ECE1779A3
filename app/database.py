@@ -8,6 +8,7 @@ db = boto3.resource('dynamodb')
 #user table class
 class UserTable:
     usertable = db.Table('UserTable')
+    imagetable = db.Table('imagetable')
 
     def add_user(self, username, password, email ):
         password_hash = generate_password_hash(password)
@@ -32,6 +33,16 @@ class UserTable:
             result = response['Item']
         return result
 
+    def check_image(self, item, value):
+        response = self.imagetable.get_item(
+            Key={
+                item: value
+            }
+        )
+        result = None
+        if 'Item' in response:
+            result = response['Item']
+        return result
 
     def update_password_username(self,username, password_hash):
         response = self.usertable.update_item(

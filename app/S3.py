@@ -1,7 +1,7 @@
 import boto3
 
 s3 = boto3.client('s3')
-bucket_name = 'zappa-bucket-a3'
+bucket_name = 'ece1779a3project'
 
 
 
@@ -22,5 +22,6 @@ def clear_s3():
         )
 
 
-def upload_file(dirname, filename):
-    s3.upload_file(dirname, bucket_name, filename)
+def upload_file(file, filename):
+    #s3.upload_file(dirname, bucket_name, filename)
+    s3.upload_fileobj(file, bucket_name,filename)
