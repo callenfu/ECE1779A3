@@ -108,6 +108,7 @@ def imageUpload():
 
 
                         upload_file(image, filename)
+                        sleep(10)
 
 
                     return redirect(url_for("showResult",filename=filename))

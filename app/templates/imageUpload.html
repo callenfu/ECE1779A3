@@ -10,7 +10,7 @@
 
 
             <p> {{ message }} </p>
-            <form action="/imageUpload" method="POST" enctype="multipart/form-data">
+            <form action={{url_for('imageUpload')}} method="POST" enctype="multipart/form-data">
 
                 <div class="form-group">
                     <label>Select image from local file</label>
