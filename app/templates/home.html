@@ -3,7 +3,20 @@
 {% block title %}{{title}}{% endblock %}
 
 {% block app_content %}
-    <h1>Home Page</h1>
+<style>
+body {
+  background-image: url('static/bg.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+}
+</style>
+    <h1 align="center">Welcome back {{username}}</h1> \
+     <div style="text-align: center">
+        <img src="static/bg.jpg"  >
+            </div>
+
+
 
 
 {% endblock %}

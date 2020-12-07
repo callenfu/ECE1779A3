@@ -9,4 +9,4 @@ from app import view
 from app import login
 from app import imageUpload
 
-# app.run('0.0.0.0',5000,debug=True)
+app.run('0.0.0.0',5000,debug=True)

@@ -1,5 +1,3 @@
-import shutil
-
 from app import app
 from flask import render_template, g, request, session, redirect, url_for, send_file
 import os, sys,shutil
@@ -80,8 +78,7 @@ def showResult(filename):
 
 @app.route("/sendRequest/<string:aQuery>",methods=['GET'])
 def sendRequest(aQuery):
-
-	return redirect("https://www.google.com/maps/search/?api=1&query=" + aQuery )
+    return redirect("https://www.google.com/maps/search/?api=1&query=" + aQuery )
 
 
 @app.route('/imageUpload', methods=['GET', 'POST'])
@@ -105,35 +102,9 @@ def imageUpload():
                     else:
                         filename = secure_filename(image.filename)
                         filename = getImageName(filename)
-
-
                         upload_file(image, filename)
-                        sleep(10)
-
-
+                        sleep(6)
                     return redirect(url_for("showResult",filename=filename))
-            elif request.form['url'] != "":
-                url = request.form['url']
-                if not allowedImageType(url):
-                    print("Image is not in valid type")
-                    return render_template("imageUpload.html", message="Image is not in valid type")
-                filename = os.path.join(app.config["IMAGE_UPLOADS"], 'temp.jpeg')
-                try:
-                    with open(filename, 'wb') as f:
-                        response = requests.get(url, stream=True)
-                        for block in response.iter_content(1024):
-                            if not block:
-                                break
-                            f.write(block)
-                    print('Image sucessfully Downloaded: ')
-                except:
-                    e = sys.exc_info()
-                    return render_template("imageUpload.html",
-                                           message="Image could not be downloaded from url. Error: " + str(e))
-                filename = getImageName(filename)
-                os.remove(filename)
-
-                return redirect("imageView")
             else:
                 print('No file or url selected.')
                 return render_template("imageUpload.html", message='No file or url selected')
