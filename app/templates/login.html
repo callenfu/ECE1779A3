@@ -3,13 +3,22 @@
 {% block title %}Login{% endblock %}
 
 {% block app_content %}
-    <h1>Login</h1>
-    <div class="row">
+<style>
+body {
+  background-image: url('static/background.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+</style>
+    <div class="row" style="color:white;">
         <div class="col-md-4">
             {{ wtf.quick_form(form) }}
-            <li><a href="{{ url_for('reset_password') }}">Forget your password?</a></li>
-            <li><a href="{{ url_for('change_my_password') }}">Change my password</a></li>
+            <li><a href="{{ url_for('reset_password') }}" style="color:white;">Forget your password?</a></li>
+            <li><a href="{{ url_for('change_my_password') }}" style="color:white;">Change my password</a></li>
         </div>
     </div>
+
 
 {% endblock %}

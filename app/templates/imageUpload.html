@@ -2,24 +2,28 @@
 {% block title %}Upload Image{% endblock %}
 
 {% block content %}
+<style>
+body {
+  background-image: url('static/bg3.jpeg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+
+}
+</style>
+
 <div class="container">
     <div class="row">
-        <div class="col">
-
-            <h1>Upload an image</h1>
-
-
-            <p> {{ message }} </p>
+        <div class="col" align="center">
+            {{message}}
             <form action={{url_for('imageUpload')}} method="POST" enctype="multipart/form-data">
+                    <div class="file btn btn-lg btn-primary" align="center">
+                        <input type="file"  name="image" id="image" oninput="filesize(this);">
+                         <br>
+            <br> <br>
 
-                <div class="form-group">
-                    <label>Select image from local file</label>
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" name="image" id="image" oninput="filesize(this);">
-                        <label class="custom-file-label" for="image">Select image...</label>
+                    <button type="submit" class="btn btn-primary btn-lg">Start</button>
                     </div>
-                </div>
-                <button type="submit" class="btn btn-primary">Upload</button>
             </form>
             <br>
             <br>
@@ -27,6 +31,7 @@
 
         </div>
     </div>
+
 </div>
 
 {% endblock %}

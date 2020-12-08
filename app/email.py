@@ -1,17 +1,7 @@
 from app import app
 from flask import render_template
 from flask_mail import Message,Mail
-
-app.config.update(dict(
-    DEBUG = True,
-    MAIL_SERVER = 'smtp.gmail.com',
-    MAIL_PORT = 465,
-    MAIL_USE_TLS = False,
-    MAIL_USE_SSL = True,
-    MAIL_USERNAME = 'ece1779group@gmail.com',
-    MAIL_PASSWORD = 'Toronto1779'
-))
-mail = Mail(app)
+from app import mail
 
 
 def send_email(subject, sender, recipients, text_body):

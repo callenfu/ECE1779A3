@@ -5,14 +5,17 @@ from werkzeug.utils import secure_filename
 import requests
 import random
 import string
-from app.database import UserTable
+from app.database import DynamoDB
 from time import sleep
 from app.S3 import clear_s3,upload_file
 app.config["IMAGE_UPLOADS"]="./app/static/img/uploads"
 #app.config["IMAGE_PROCESSED"]="./app/static/img/processed"
 app.config["ALLOWED_IMAGE_EXETENSIONS"] = ["JPEG","JPG","PNG"]
 app.config['MAX_IMAGE_FILESIZE'] = 1024*1024
-u = UserTable()
+db = DynamoDB()
+
+
+
 def generate_filename():
     '''
     method to get filename that have not been saved in the database
@@ -68,22 +71,23 @@ def deleteAllImages():
 
 @app.route('/showResult/<filename>', methods=['GET', 'POST'])
 def showResult(filename):
-    response = u.check_image("imagename", filename)
-    sleep(2)
+    sleep(6)
+    response = db.check_image("imagename", filename)
     textResult = response['textresult']
-    textResultList = textResult.split(";")
+    textResultList = textResult.split(";")[:-1]
     if textResultList == ['']:
         textResultList[0] = "No text detected in image"
     return render_template("showResult.html", recognition_result=textResultList)
 
 @app.route("/sendRequest/<string:aQuery>",methods=['GET'])
 def sendRequest(aQuery):
-    return redirect("https://www.google.com/maps/search/?api=1&query=" + aQuery )
+    return redirect("https://www.google.com/maps/search/?api=1&query=" + aQuery)
 
 
 @app.route('/imageUpload', methods=['GET', 'POST'])
 def imageUpload():
     if 'loggedin' in session:
+        username = session["username"]
         if request.method == "POST":
             if request.files:
                 if "filesize" in request.cookies:
@@ -102,15 +106,28 @@ def imageUpload():
                     else:
                         filename = secure_filename(image.filename)
                         filename = getImageName(filename)
-                        upload_file(image, filename)
-                        sleep(6)
-                    return redirect(url_for("showResult",filename=filename))
+                        finalfilename = generate_filename()
+                        finalfilename = finalfilename + '.' + filename.rsplit(".", 1)[1]
+                        upload_file(image, finalfilename)
+                        db.add_image(username,finalfilename)
+                    return redirect(url_for("showResult",filename=finalfilename))
             else:
                 print('No file or url selected.')
                 return render_template("imageUpload.html", message='No file or url selected')
-        return render_template("imageUpload.html", message="please select image")
+        return render_template("imageUpload.html")
     return redirect(url_for('login'))
 
 @app.route('/getImageName', methods=['GET', 'POST'])
 def getImageName(filename):
     return filename
+
+
+@app.route('/uploadhistory',methods=['GET','POST'])
+def upload_history():
+    if 'loggedin' in session:
+        username = session["username"]
+        historytable = db.get_history(username)
+        return render_template("uploadhistory.html",historytable = historytable)
+    return redirect(url_for("login"))
+
+

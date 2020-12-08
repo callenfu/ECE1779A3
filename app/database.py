@@ -1,12 +1,13 @@
 import boto3
 from werkzeug.security import generate_password_hash
+from boto3.dynamodb.conditions import Key, Attr
 
 # Get the service resource.
 db = boto3.resource('dynamodb')
 
 
 #user table class
-class UserTable:
+class DynamoDB:
     usertable = db.Table('UserTable')
     imagetable = db.Table('imagetable')
 
@@ -44,6 +45,20 @@ class UserTable:
             result = response['Item']
         return result
 
+    def check_email(self,email):
+        response = self.usertable.query(
+            IndexName="email-index",
+            KeyConditionExpression=Key('email').eq(email),)
+        result = response['Items'][0]
+        return result
+
+    def get_history(self,username):
+        response = self.imagetable.query(
+            IndexName="username-index",
+            KeyConditionExpression=Key('username').eq(username),)
+        result = response['Items']
+        return result
+
     def update_password_username(self,username, password_hash):
         response = self.usertable.update_item(
             Key={
@@ -54,6 +69,17 @@ class UserTable:
                 ':r': password_hash
             },
             ReturnValues="UPDATED_NEW"
+        )
+        return response
+
+
+    def add_image(self, username, filename):
+        image = {
+            'username': username,
+            'imagename': filename
+        }
+        response = self.imagetable.put_item(
+            Item=image
         )
         return response
 

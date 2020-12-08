@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <script>
+    Event.on("#save",'click',function(e){
+    DOM.show("#loading");});
+
+
   function filesize(elem){
     document.cookie = `filesize=${elem.files[0].size}`
   }
 
     </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
 
 </head>
 
 {% extends 'bootstrap/base.html' %}
-
-{% block title %}
-    {% if title %}{{ title }} - Face Mask Detection{% else %}Welcome to Face Mask Detection{% endif %}
-{% endblock %}
 {% block navbar %}
     <nav class="navbar navbar-default">
         <div class="container">
@@ -26,9 +29,10 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="{{ url_for('home') }}">Home</a>
+                <a class="navbar-brand" href="{{ url_for('index') }}">Home</a>
                     {% if session['loggedin'] %}
-                    <a class="navbar-brand" href="{{ url_for('imageUpload') }}">Upload</a>
+                    <a class="navbar-brand" href="{{ url_for('imageUpload') }}">LOCOGNIZE</a>
+                    <a class="navbar-brand" href="{{ url_for('upload_history') }}">My Location</a>
                     {% endif %}
             </div>
                 <ul class="nav navbar-nav navbar-right">

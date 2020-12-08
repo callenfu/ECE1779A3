@@ -1,6 +1,6 @@
 from app import app
 from flask import render_template, request, session, redirect, url_for, flash
-from app.database import  UserTable
+from app.database import  DynamoDB
 from flask_mail import Message
 from app.form import LoginForm, ChangePassword,RegisterForm, ResetPassword
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -8,7 +8,7 @@ from app.email import send_password_reset_email
 import string, random
 
 
-usertable = UserTable()
+db = DynamoDB()
 
 def generate_password():
     """method generate password will random a 10-length-string with numbers and letters,
@@ -38,8 +38,8 @@ def login():
         if form.validate_on_submit():
             username = form.username.data
             password = form.password.data
-            account = usertable.check_item("username", username)
-            if account == None:
+            account = db.check_item("username", username)
+            if account is None:
                 flash('Invalid username or password')
                 return redirect(url_for('login'))
             else:
@@ -77,10 +77,10 @@ def change_my_password():
         username = form.username.data
         old_password = form.password.data
         new_password_hash = generate_password_hash(form.password1.data)
-        account = usertable.check_item("username", username)
+        account = db.check_item("username", username)
         if account is not None:
             if check_password_hash(str(account['password_hash']), old_password):
-                usertable.update_password_username(username, new_password_hash)
+                db.update_password_username(username, new_password_hash)
                 flash('Your password has been changed')
                 return redirect(url_for('login'))
             else:
@@ -106,12 +106,12 @@ def sign_up():
         username = form.username.data
         password = form.password1.data
         email = form.email.data
-        account = usertable.check_item("username", username)
+        account = db.check_item("username", username)
         if account is not None:
             flash('This User name or Email is existing')
             return redirect(url_for('sign_up'))
         else:
-            usertable.add_user(username,password,email)
+            db.add_user(username, password, email)
             flash("You have add a new user successfully")
             return redirect(url_for('sign_up'))
 
@@ -125,14 +125,15 @@ def reset_password():
     form = ResetPassword()
     if form.validate_on_submit():
         user_email = form.email.data
-        mail_exist = usertable.check_item('email',user_email)
+        mail_exist = db.check_email(user_email)
         if mail_exist is not None:
             new_password = generate_password()
             new_password_hash = generate_password_hash(new_password)
             username = mail_exist['username']
-            usertable.update_password_username(username,new_password_hash)
+            db.update_password_username(username, new_password_hash)
             flash('Your new password has been sent to your mailbox')
             redirect('login')
+            print(app.config)
             send_password_reset_email(user_email, new_password)
             return redirect(url_for('login'))
         else:

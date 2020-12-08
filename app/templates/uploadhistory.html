@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block app_content %}
+
+
+    <table class="table table-bordered">
+    <thead>
+       <th>result</th>
+       <th> Action </th>
+    </thead>
+
+
+    {% for element in historytable%}
+        <tr>
+            <td>{{ element }}</td>
+            <td>
+                <form action="{{ url_for('sendRequest', aQuery=element) }}" >
+                    <input type='submit' value='select' />
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+  </table>
+{% endblock %}
