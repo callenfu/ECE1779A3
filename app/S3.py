@@ -3,6 +3,12 @@ import boto3
 s3 = boto3.client('s3')
 bucket_name = 'ece1779a3project'
 
+def get_image(filename):
+    file = boto3.resource('s3')
+    obj = file.Object(bucket_name,filename)
+    body = obj.get()['Body'].read()
+    return body
+
 
 
 def clear_s3():

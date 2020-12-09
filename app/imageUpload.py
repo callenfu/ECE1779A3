@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, g, request, session, redirect, url_for, send_file
+from flask import render_template, g, request, session, redirect, url_for, send_file, flash
 import os, sys,shutil
 from werkzeug.utils import secure_filename
 import requests
@@ -7,7 +7,7 @@ import random
 import string
 from app.database import DynamoDB
 from time import sleep
-from app.S3 import clear_s3,upload_file
+from app.S3 import clear_s3,upload_file,get_image
 app.config["IMAGE_UPLOADS"]="./app/static/img/uploads"
 #app.config["IMAGE_PROCESSED"]="./app/static/img/processed"
 app.config["ALLOWED_IMAGE_EXETENSIONS"] = ["JPEG","JPG","PNG"]
@@ -71,13 +71,13 @@ def deleteAllImages():
 
 @app.route('/showResult/<filename>', methods=['GET', 'POST'])
 def showResult(filename):
-    sleep(6)
     response = db.check_image("imagename", filename)
-    textResult = response['textresult']
-    textResultList = textResult.split(";")[:-1]
-    if textResultList == ['']:
-        textResultList[0] = "No text detected in image"
-    return render_template("showResult.html", recognition_result=textResultList)
+    if "textresult" in response:
+        textResult = response['textresult']
+        textResultList = textResult.split(";")[:-1]
+    else:
+        textResultList = "No text detected in image"
+    return render_template("showResult.html", recognition_result=textResultList, filename = filename)
 
 @app.route("/sendRequest/<string:aQuery>",methods=['GET'])
 def sendRequest(aQuery):
@@ -110,9 +110,19 @@ def imageUpload():
                         finalfilename = finalfilename + '.' + filename.rsplit(".", 1)[1]
                         upload_file(image, finalfilename)
                         db.add_image(username,finalfilename)
+                    result = None
+                    loop = 0
+                    while result is None and loop < 10:
+                        loop += 1
+                        response = db.check_image("imagename", finalfilename)
+                        if "testresult" in response:
+                            result = response['textresult']
+                        else:
+                            result = None
+                            sleep(1)
                     return redirect(url_for("showResult",filename=finalfilename))
             else:
-                print('No file or url selected.')
+                flash('No file or url selected.')
                 return render_template("imageUpload.html", message='No file or url selected')
         return render_template("imageUpload.html")
     return redirect(url_for('login'))
@@ -131,3 +141,7 @@ def upload_history():
     return redirect(url_for("login"))
 
 
+@app.route('/sendImages/<filename>/', methods=["GET", "POST"])
+def sendImages(filename):
+    picture = get_image(filename)
+    return send_file(picture)

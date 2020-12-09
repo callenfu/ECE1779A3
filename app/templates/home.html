@@ -11,15 +11,12 @@ body {
   background-size: cover;
 }
 </style>
-    <h1 align="center">Welcome back {{username}}</h1> \
+    <h1 align="center">Welcome back {{username}}</h1>
      <div style="text-align: center">
             </div>
 
-<br><br><br><br><br><br>
-
-
-<button type="button" class="btn btn-primary btn-lg btn-block" align="center" href="}}">Start Location Recognize</button>
-
+<br><br><br><br><br><br><br>
+<a href="{{ url_for('imageUpload') }}" class="btn btn-primary btn-lg btn-block" role="button">Start Location Recognition</a>
 
 
 {% endblock %}
