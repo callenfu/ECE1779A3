@@ -84,3 +84,17 @@ class DynamoDB:
         return response
 
 
+    def update_result(self,result,filename):
+        response = self.imagetable.update_item(
+             Key={
+                 'imagename': filename
+             },
+             UpdateExpression="set textresult=:r",
+            ExpressionAttributeValues={
+               ':r': result
+        },
+        ReturnValues="UPDATED_NEW"
+         )
+        return response
+
+

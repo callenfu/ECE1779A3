@@ -1,5 +1,7 @@
 import boto3
 
+
+
 s3 = boto3.client('s3')
 bucket_name = 'ece1779a3project'
 
@@ -31,3 +33,21 @@ def clear_s3():
 def upload_file(file, filename):
     #s3.upload_file(dirname, bucket_name, filename)
     s3.upload_fileobj(file, bucket_name,filename)
+
+
+def create_presigned_url(object_name):
+    """Generate a presigned URL to share an S3 object
+
+    :param bucket_name: string
+    :param object_name: string
+    :param expiration: Time in seconds for the presigned URL to remain valid
+    :return: Presigned URL as string. If error, returns None.
+    """
+
+    # Generate a presigned URL for the S3 object
+    response = s3.generate_presigned_url('get_object',
+                                                    Params={'Bucket': bucket_name,
+                                                            'Key': object_name},
+                                                    ExpiresIn=3600)
+    # The response contains the presigned URL
+    return response

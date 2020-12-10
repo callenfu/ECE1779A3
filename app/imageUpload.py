@@ -7,7 +7,7 @@ import random
 import string
 from app.database import DynamoDB
 from time import sleep
-from app.S3 import clear_s3,upload_file,get_image
+from app.S3 import clear_s3,upload_file,get_image,create_presigned_url
 app.config["IMAGE_UPLOADS"]="./app/static/img/uploads"
 #app.config["IMAGE_PROCESSED"]="./app/static/img/processed"
 app.config["ALLOWED_IMAGE_EXETENSIONS"] = ["JPEG","JPG","PNG"]
@@ -77,12 +77,19 @@ def showResult(filename):
         textResultList = textResult.split(";")[:-1]
     else:
         textResultList = "No text detected in image"
-    return render_template("showResult.html", recognition_result=textResultList, filename = filename)
+    url = create_presigned_url(filename)
+    return render_template("showResult.html", recognition_result=textResultList, picture=url, filename = filename)
 
-@app.route("/sendRequest/<string:aQuery>",methods=['GET'])
-def sendRequest(aQuery):
+
+@app.route("/sendRequest/<filename>/<string:aQuery>",methods=['GET'])
+def sendRequest(filename,aQuery):
+    db.update_result(aQuery,filename)
     return redirect("https://www.google.com/maps/search/?api=1&query=" + aQuery)
 
+
+@app.route("/historyRequest/<string:aQuery>",methods=['GET'])
+def historyRequest(aQuery):
+    return redirect("https://www.google.com/maps/search/?api=1&query=" + aQuery)
 
 @app.route('/imageUpload', methods=['GET', 'POST'])
 def imageUpload():
@@ -137,11 +144,15 @@ def upload_history():
     if 'loggedin' in session:
         username = session["username"]
         historytable = db.get_history(username)
-        return render_template("uploadhistory.html",historytable = historytable)
+        historyresult = []
+        for item in historytable:
+            historyresult.append(item["textresult"])
+        return render_template("uploadhistory.html",historytable=historyresult)
     return redirect(url_for("login"))
 
 
 @app.route('/sendImages/<filename>/', methods=["GET", "POST"])
 def sendImages(filename):
+    url = create_presigned_url(filename)
     picture = get_image(filename)
     return send_file(picture)
