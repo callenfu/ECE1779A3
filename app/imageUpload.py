@@ -146,7 +146,8 @@ def upload_history():
         historytable = db.get_history(username)
         historyresult = []
         for item in historytable:
-            historyresult.append(item["textresult"])
+            if "textresult" in item:
+                historyresult.append(item["textresult"])
         return render_template("uploadhistory.html",historytable=historyresult)
     return redirect(url_for("login"))
 
@@ -156,3 +157,12 @@ def sendImages(filename):
     url = create_presigned_url(filename)
     picture = get_image(filename)
     return send_file(picture)
+
+
+@app.route('/delete_history', methods=["GET"])
+def delete_history():
+    if 'loggedin' in session:
+        username = session["username"]
+        response = db.delete_image(username)
+        return redirect(url_for('uploadhistory'))
+    return redirect(url_for('login'))

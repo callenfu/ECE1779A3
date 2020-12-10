@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block title %}Recognize Result{% endblock %}
 {% block app_content %}
 
 <div align="center">
@@ -9,7 +10,7 @@
     <table class="table table-bordered">
 
     <thead>
-       <th>result</th>
+       <th>Result</th>
        <th> Action </th>
     </thead>
 
@@ -19,7 +20,7 @@
             <td>{{ element }}</td>
             <td>
                 <form action="{{ url_for('sendRequest',filename=filename, aQuery=element) }}" target="_blank">
-                    <input type='submit' value='select' />
+                    <input type='submit' value='Go' />
                 </form>
             </td>
         </tr>

@@ -133,8 +133,7 @@ def reset_password():
             db.update_password_username(username, new_password_hash)
             flash('Your new password has been sent to your mailbox')
             redirect('login')
-            print(app.config)
-            send_password_reset_email(user_email, new_password)
+            # send_password_reset_email(user_email, new_password)
             return redirect(url_for('login'))
         else:
             flash('This email address is not registered')
