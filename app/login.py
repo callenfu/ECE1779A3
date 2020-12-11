@@ -114,6 +114,7 @@ def sign_up():
             db.add_user(username, password, email)
             flash("You have add a new user successfully")
             return redirect(url_for('sign_up'))
+    return render_template('adduser.html', title='Add New User', form=form)
 
 
 @app.route('/reset_password', methods=['GET', 'POST'])

@@ -14,7 +14,7 @@
         <tr>
             <td>{{ element }}</td>
             <td>
-                <form action="{{ url_for('historyRequest', aQuery=element) }}" >
+                <form action="{{ url_for('historyRequest', aQuery=element) }}" target="_blank" >
                     <input type='submit' value='Go' />
                 </form>
             </td>
@@ -22,5 +22,5 @@
     {% endfor %}
   </table>
 
-<!--<a href="{{ url_for('delete_history') }}" class="btn btn-primary btn-lg btn-block" role="button">Delete history</a>-->
+<a href="{{ url_for('delete_history') }}" class="btn btn-primary btn-lg btn-block" role="button">Delete history</a>
 {% endblock %}

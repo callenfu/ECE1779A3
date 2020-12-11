@@ -23,4 +23,4 @@ from app import login
 from app import imageUpload
 from app import email
 
-app.run('0.0.0.0',5000,debug=True)
+# app.run('0.0.0.0',5000,debug=True)

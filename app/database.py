@@ -97,11 +97,13 @@ class DynamoDB:
          )
         return response
 
-    # def delete_image(self,username):
-    #     response = self.imagetable.delete_item(
-    #         Key={
-    #             'imagename': *,
-    #             'username': username,},)
-    #     return response
+    def delete_image(self,imagename):
+        response = self.imagetable.delete_item(
+            Key={
+                'imagename': imagename,
+            },
+
+        )
+        return response
 
 

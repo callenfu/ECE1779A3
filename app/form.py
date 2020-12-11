@@ -7,15 +7,15 @@ class RegisterForm(FlaskForm):
     """
         AddUserForm class is to define the form on /adduser page.
         """
-    username = StringField('Username', validators=[DataRequired(),
+    username = StringField('Username', validators=[DataRequired(message='Not Allowed Empty Password'),
                                                    Length(max=25,min=5,message='Username length should between 5~25')])
-    email = StringField('Email Address', validators=[DataRequired(),Email()])
+    email = StringField('Email Address', validators=[DataRequired(), Email(message="please enter a Email address")])
     password1 = PasswordField('Password', validators=[DataRequired(message='Not Allowed Empty Password'),
-                                                      Length(max=25,min=5,message='Password length should between 5~25')])
+                                                   Length(max=25,min=5,message='Password length should between 5~25')])
     password2 = PasswordField('Please Repeat Password',
                               validators=[DataRequired(),
                                           EqualTo("password1",message='Your password and repeat password do not match')])
-    submit = SubmitField('Sign up')
+    submit = SubmitField('Register')
 
 
 class LoginForm(FlaskForm):

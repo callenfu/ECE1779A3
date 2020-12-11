@@ -75,8 +75,11 @@ def showResult(filename):
     if "textresult" in response:
         textResult = response['textresult']
         textResultList = textResult.split(";")[:-1]
+        if len(textResultList) == 0:
+            flash("No text detected in image")
     else:
         textResultList = "No text detected in image"
+        flash("No text detected in image")
     url = create_presigned_url(filename)
     return render_template("showResult.html", recognition_result=textResultList, picture=url, filename = filename)
 
@@ -147,7 +150,8 @@ def upload_history():
         historyresult = []
         for item in historytable:
             if "textresult" in item:
-                historyresult.append(item["textresult"])
+                if len(item["textresult"]) !=0:
+                    historyresult.append(item["textresult"])
         return render_template("uploadhistory.html",historytable=historyresult)
     return redirect(url_for("login"))
 
@@ -163,6 +167,10 @@ def sendImages(filename):
 def delete_history():
     if 'loggedin' in session:
         username = session["username"]
-        response = db.delete_image(username)
-        return redirect(url_for('uploadhistory'))
+        historytable = db.get_history(username)
+        for item in historytable:
+            imagename= item['imagename']
+            db.delete_image(imagename)
+        flash("All history deleted")
+        return redirect(url_for('upload_history'))
     return redirect(url_for('login'))
